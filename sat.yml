@@ -12,7 +12,11 @@
       copy:
         src: "~/manifest.zip"
         dest: /root/manifest.zip
-  
+    - name: Retrieve GPG keys for later use
+      set_fact:
+        satellite_content_credentials: "{{ satellite_content_credentials | default([]) | union([{ 'name': item.name, 'content_type': 'gpg_key', 'content': lookup('url', item.url) }]) }}"
+      loop: "{{ gpg_keys }}"
+
   roles: 
     - role: redhat.satellite.manifest
       vars:
@@ -33,12 +37,19 @@
         satellite_password: "{{ sat_passwd }}"
         satellite_settings:
           http_proxy: "{{ default_http_proxy_url|default(omit) }}"
-          content_default_http_proxy: "{{ default_http_proxy_url is defined | ternary(default_http_proxy, omit) }}"
+          content_default_http_proxy: "{{ default_http_proxy_url is defined | ternary('default_http_proxy', omit) }}"
           default_redhat_download_policy: "{{ rh_repo_download_policy|default(omit) }}"
           default_download_policy: "{{ custom_repo_download_policy|default(omit) }}"
           default_proxy_download_policy: "{{ capsule_repo_download_policy|default(omit) }}"
       tags: settings
-    - role: gpg-keys
+    - role: redhat.satellite.content_credentials
+      vars:
+        satellite_server_url: "{{ sat_url }}"
+        satellite_username: "{{ sat_user }}"
+        satellite_password: "{{ sat_passwd }}"
+        satellite_organization: "{{ organization }}"
+        # satellite_content_credentials already set up in pre-task
+      environment: "{{ default_http_proxy_url is defined | ternary({ 'http_proxy': default_http_proxy_url, 'https_proxy': default_http_proxy_url }), omit) }}"
       tags: gpg-keys
     - role: syncplans
       tags: syncplans
