@@ -7,6 +7,11 @@
   collections:
     - redhat.satellite
 
+  pre_tasks:
+    - name: Copy manifest to target Satellite
+      copy:
+        src: "~/manifest.zip"
+        dest: /root/manifest.zip
   
   roles: 
     - role: redhat.satellite.manifest
@@ -15,7 +20,7 @@
         satellite_username: "{{ sat_user }}"
         satellite_password: "{{ sat_passwd }}"
         satellite_organization: "{{ organization }}"
-        satellite_manifest_path: "~/manifest.zip"
+        satellite_manifest_path: "/root/manifest.zip"
       tags: manifest
     - role: firewalld
       tags: firewalld
@@ -49,9 +54,3 @@
     - role: activationkeys
       tags: activationkeys
 
-  pre_tasks:
-    - name: Copy manifest to target Satellite
-      copy:
-        src: "~/manifest.zip"
-        dest: /root/manifest.zip
- 
