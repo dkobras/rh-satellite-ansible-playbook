@@ -3,6 +3,11 @@
   - vars.yml
   #- vars_generated.yml
   - passwd.yml
+  vars:
+    satellite_server_url: "{{ sat_url }}"
+    satellite_username: "{{ sat_user }}"
+    satellite_password: "{{ sat_passwd }}"
+    satellite_organization: "{{ organization }}"
 
   collections:
     - redhat.satellite
@@ -20,10 +25,6 @@
   roles: 
     - role: redhat.satellite.manifest
       vars:
-        satellite_server_url: "{{ sat_url }}"
-        satellite_username: "{{ sat_user }}"
-        satellite_password: "{{ sat_passwd }}"
-        satellite_organization: "{{ organization }}"
         satellite_manifest_path: "/root/manifest.zip"
       tags: manifest
     - role: firewalld
@@ -32,9 +33,6 @@
     - role: proxy
     - role: redhat.satellite.settings
       vars:
-        satellite_server_url: "{{ sat_url }}"
-        satellite_username: "{{ sat_user }}"
-        satellite_password: "{{ sat_passwd }}"
         satellite_settings:
           http_proxy: "{{ default_http_proxy_url|default(omit) }}"
           content_default_http_proxy: "{{ default_http_proxy_url is defined | ternary('default_http_proxy', omit) }}"
@@ -44,19 +42,12 @@
       tags: settings
     - role: redhat.satellite.content_credentials
       vars:
-        satellite_server_url: "{{ sat_url }}"
-        satellite_username: "{{ sat_user }}"
-        satellite_password: "{{ sat_passwd }}"
         satellite_organization: "{{ organization }}"
         # satellite_content_credentials already set up in pre-task
       environment: "{{ default_http_proxy_url is defined | ternary({ 'http_proxy': default_http_proxy_url, 'https_proxy': default_http_proxy_url }), omit) }}"
       tags: gpg-keys
     - role: redhat.satellite.sync_plans
       vars:
-        satellite_server_url: "{{ sat_url }}"
-        satellite_username: "{{ sat_user }}"
-        satellite_password: "{{ sat_passwd }}"
-        satellite_organization: "{{ organization }}"
         satellite_sync_plans:
           - name: "{{ sync_plan }}"
             interval: "{{ sync_interval }}"
@@ -75,10 +66,6 @@
       tags: ptable
     - role: redhat.satellite.operatingsystems
       vars:
-        satellite_server_url: "{{ sat_url }}"
-        satellite_username: "{{ sat_user }}"
-        satellite_password: "{{ sat_passwd }}"
-        satellite_organization: "{{ organization }}"
         satellite_operatingsystems:
         - name: "RedHat"
           major: "8"
@@ -91,35 +78,19 @@
       tags: os
     - role: redhat.satellite.domains
       vars:
-        satellite_server_url: "{{ sat_url }}"
-        satellite_username: "{{ sat_user }}"
-        satellite_password: "{{ sat_passwd }}"
-        satellite_organization: "{{ organization }}"
         satellite_domains: "{{ domains | map('combine', { 'organizations': organization }) | list }}"
       tags: domains
     - role: redhat.satellite.subnets
       vars:
-        satellite_server_url: "{{ sat_url }}"
-        satellite_username: "{{ sat_user }}"
-        satellite_password: "{{ sat_passwd }}"
-        satellite_organization: "{{ organization }}"
         satellite_subnets: "{{ subnets }}"
       tags: subnets
   # - role: compute-resources
   #   tags: compute-resources
     - role: redhat.satellite.hostgroups
       vars:
-        satellite_server_url: "{{ sat_url }}"
-        satellite_username: "{{ sat_user }}"
-        satellite_password: "{{ sat_passwd }}"
-        satellite_organization: "{{ organization }}"
         satellite_hostgroups: "{{ hostgroups }}"
       tags: host-groups
     - role: redhat.satellite.activation_keys
       vars:
-        satellite_server_url: "{{ sat_url }}"
-        satellite_username: "{{ sat_user }}"
-        satellite_password: "{{ sat_passwd }}"
-        satellite_organization: "{{ organization }}"
         satellite_activation_keys: "{{ activation_keys }}"
       tags: activationkeys
