@@ -115,6 +115,11 @@
         satellite_organization: "{{ organization }}"
         satellite_hostgroups: "{{ hostgroups }}"
       tags: host-groups
-    - role: activationkeys
+    - role: redhat.satellite.activation_keys
+      vars:
+        satellite_server_url: "{{ sat_url }}"
+        satellite_username: "{{ sat_user }}"
+        satellite_password: "{{ sat_passwd }}"
+        satellite_organization: "{{ organization }}"
+        satellite_activation_keys: "{{ activation_keys }}"
       tags: activationkeys
-
