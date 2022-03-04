@@ -26,7 +26,18 @@
       tags: firewalld
     - role: locations
     - role: proxy
-    - role: settings
+    - role: redhat.satellite.settings
+      vars:
+        satellite_server_url: "{{ sat_url }}"
+        satellite_username: "{{ sat_user }}"
+        satellite_password: "{{ sat_passwd }}"
+        satellite_settings:
+          http_proxy: "{{ default_http_proxy_url|default(omit) }}"
+          content_default_http_proxy: "{{ default_http_proxy_url is defined | ternary(default_http_proxy, omit) }}"
+          default_redhat_download_policy: "{{ rh_repo_download_policy|default(omit) }}"
+          default_download_policy: "{{ custom_repo_download_policy|default(omit) }}"
+          default_proxy_download_policy: "{{ capsule_repo_download_policy|default(omit) }}"
+      tags: settings
     - role: gpg-keys
       tags: gpg-keys
     - role: syncplans
