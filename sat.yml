@@ -51,7 +51,17 @@
         # satellite_content_credentials already set up in pre-task
       environment: "{{ default_http_proxy_url is defined | ternary({ 'http_proxy': default_http_proxy_url, 'https_proxy': default_http_proxy_url }), omit) }}"
       tags: gpg-keys
-    - role: syncplans
+    - role: redhat.satellite.sync_plans
+      vars:
+        satellite_server_url: "{{ sat_url }}"
+        satellite_username: "{{ sat_user }}"
+        satellite_password: "{{ sat_passwd }}"
+        satellite_organization: "{{ organization }}"
+        satellite_sync_plans:
+          - name: "{{ sync_plan }}"
+            interval: "{{ sync_interval }}"
+            sync_date: "2020-01-01 01:04:00 UTC"
+            products: "{{ products }}"
       tags: syncplans
     - role: repos
       tags: repos
