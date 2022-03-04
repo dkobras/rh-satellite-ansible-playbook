@@ -97,7 +97,12 @@
         satellite_organization: "{{ organization }}"
         satellite_domains: "{{ domains | map('combine', { 'organizations': organization }) | list }}"
       tags: domains
-    - role: subnets
+    - role: redhat.satellite.subnets
+        satellite_server_url: "{{ sat_url }}"
+        satellite_username: "{{ sat_user }}"
+        satellite_password: "{{ sat_passwd }}"
+        satellite_organization: "{{ organization }}"
+        satellite_subnets: "{{ subnets }}"
       tags: subnets
   # - role: compute-resources
   #   tags: compute-resources
