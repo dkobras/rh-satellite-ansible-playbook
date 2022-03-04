@@ -98,6 +98,7 @@
         satellite_domains: "{{ domains | map('combine', { 'organizations': organization }) | list }}"
       tags: domains
     - role: redhat.satellite.subnets
+      vars:
         satellite_server_url: "{{ sat_url }}"
         satellite_username: "{{ sat_user }}"
         satellite_password: "{{ sat_passwd }}"
@@ -106,7 +107,13 @@
       tags: subnets
   # - role: compute-resources
   #   tags: compute-resources
-    - role: host-groups
+    - role: redhat.satellite.hostgroups
+      vars:
+        satellite_server_url: "{{ sat_url }}"
+        satellite_username: "{{ sat_user }}"
+        satellite_password: "{{ sat_passwd }}"
+        satellite_organization: "{{ organization }}"
+        satellite_hostgroups: "{{ hostgroups }}"
       tags: host-groups
     - role: activationkeys
       tags: activationkeys
