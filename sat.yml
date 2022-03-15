@@ -1,4 +1,6 @@
 - hosts: all
+  gather_facts: false
+  become: false
   vars_files:
   - vars.yml
   #- vars_generated.yml
@@ -16,7 +18,7 @@
     - name: Copy manifest to target Satellite
       copy:
         src: "~/manifest.zip"
-        dest: /root/manifest.zip
+        dest: /tmp/manifest.zip
     - name: Retrieve GPG keys for later use
       set_fact:
         satellite_content_credentials: "{{ satellite_content_credentials | default([]) | union([{ 'name': item.name, 'content_type': 'gpg_key', 'content': lookup('url', item.url) }]) }}"
@@ -25,9 +27,10 @@
   roles: 
     - role: redhat.satellite.manifest
       vars:
-        satellite_manifest_path: "/root/manifest.zip"
+        satellite_manifest_path: "/tmp/manifest.zip"
       tags: manifest
     - role: firewalld
+      become: true
       tags: firewalld
     - role: locations
     - role: proxy
@@ -44,7 +47,7 @@
       vars:
         satellite_organization: "{{ organization }}"
         # satellite_content_credentials already set up in pre-task
-      environment: "{{ default_http_proxy_url is defined | ternary({ 'http_proxy': default_http_proxy_url, 'https_proxy': default_http_proxy_url }), omit) }}"
+      environment: "{{ default_http_proxy_url is defined | ternary({ 'http_proxy': default_http_proxy_url, 'https_proxy': default_http_proxy_url }, omit) }}"
       tags: gpg-keys
     - role: redhat.satellite.sync_plans
       vars:
